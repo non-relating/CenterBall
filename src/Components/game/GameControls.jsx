@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Move, RotateCw, Target, Zap } from "lucide-react";
-
 export default function GameControls({ game, selectedBall, onBallMove }) {
   const [aimAngle, setAimAngle] = useState([0]);
   const [power, setPower] = useState([50]);
@@ -132,3 +131,30 @@ export default function GameControls({ game, selectedBall, onBallMove }) {
                 onValueChange={setPower}
                 max={100}
                 min={10}
+                className="glass-slider"
+              />
+            </div>
+
+            <Button
+              onClick={handleMove}
+              disabled={isMoving}
+              className="w-full bg-gradient-to-r from-magenta-500 to-yellow-500 hover:from-magenta-600 hover:to-yellow-600 text-white font-bold py-3 rounded-xl neon-glow transition-all duration-300"
+            >
+              {isMoving ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                  <span>Moving...</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Zap className="w-5 h-5" />
+                  <span>Shoot</span>
+                </div>
+              )}
+            </Button>
+          </CardContent>
+        </div>
+      )}
+    </div>
+  );
+}

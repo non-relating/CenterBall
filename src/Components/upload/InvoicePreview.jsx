@@ -255,4 +255,5 @@ export default function InvoicePreview({
         </Button>
       </CardFooter>
     </Card>
-  ); 
+  );
+}
