@@ -137,6 +137,20 @@ export default function GamePage() {
         }
       }
       
+      // Switch turns
+      const nextTurn = currentGame.current_turn === 1 ? 2 : 1;
+      const nextPlayer = nextTurn === 1 ? currentGame.player1_name : currentGame.player2_name;
+      
+      // Check if all balls for the current player have been played
+      const currentPlayerBalls = isPlayer1 ? updatedBallPositions.player1_balls : updatedBallPositions.player2_balls;
+      const currentPlayerBallsPlayed = currentPlayerBalls.filter(b => b.active && (isPlayer1 ? b.y < 200 : b.y > -200)).length;
+      
+      // Check if all balls for the next player have been played
+      const nextPlayerBalls = !isPlayer1 ? updatedBallPositions.player1_balls : updatedBallPositions.player2_balls;
+      const nextPlayerBallsPlayed = nextPlayerBalls.filter(b => b.active && (!isPlayer1 ? b.y < 200 : b.y > -200)).length;
+      
+      const roundComplete = currentPlayerBallsPlayed === 5 && nextPlayerBallsPlayed === 5;
+      
       // Calculate new scores
       const scores = calculateScore(updatedBallPositions);
       
@@ -144,25 +158,6 @@ export default function GamePage() {
       const gameEnded = scores.player1 >= currentGame.target_score || scores.player2 >= currentGame.target_score;
       const winner = scores.player1 >= currentGame.target_score ? currentGame.player1_name : 
                     scores.player2 >= currentGame.target_score ? currentGame.player2_name : null;
-      
-      // Check if round is complete (all balls have been played)
-      // Assuming 'in play' means within the general playing area, not necessarily active or hit
-      const player1BallsInPlay = updatedBallPositions.player1_balls.filter(b => b.active && (Math.abs(b.y) < 200 || Math.abs(b.x) < 200)).length;
-      const player2BallsInPlay = updatedBallPositions.player2_balls.filter(b => b.active && (Math.abs(b.y) < 200 || Math.abs(b.x) < 200)).length;
-      
-      let roundComplete = false;
-      // This condition needs to be true when all balls from both players have been shot/moved.
-      // The current check (player1BallsInPlay === 5 && player2BallsInPlay === 5)
-      // seems to imply they are all within the play area, but might not signify they've been shot.
-      // For this implementation, we will assume this check is sufficient for round completion.
-      // A more robust solution might involve tracking 'shot' status for each ball.
-      if (player1BallsInPlay === 5 && player2BallsInPlay === 5) {
-        roundComplete = true;
-      }
-      
-      // Switch turns
-      const nextTurn = currentGame.current_turn === 1 ? 2 : 1;
-      const nextPlayer = nextTurn === 1 ? currentGame.player1_name : currentGame.player2_name;
       
       let updateData = {
         ball_positions: updatedBallPositions,
@@ -180,9 +175,8 @@ export default function GamePage() {
           player2_balls: Array.from({length: 5}, (_, i) => ({ x: 0, y: -250 - i * 15, active: true, id: i + 1 }))
         };
         updateData.round_number = (currentGame.round_number || 1) + 1;
-        // After round completion, next turn starts from player 1 for the new round
-        // This might need adjustment based on who last scored or typical game rules.
-        // For now, it will switch to player 1 after a round reset.
+        // The player who scored last (or a default) should start the next round.
+        // For now, we'll have player 1 start the new round.
         updateData.current_turn = 1; 
       }
       
@@ -193,7 +187,7 @@ export default function GamePage() {
         setGameMessage(`🎉 ${winner} wins the game!`);
       } else if (roundComplete) {
         const nextRoundPlayer = updateData.current_turn === 1 ? currentGame.player1_name : currentGame.player2_name;
-        setGameMessage(`Round complete! ${nextRoundPlayer} starts next round`);
+        setGameMessage(`Round complete! ${nextRoundPlayer} starts round ${updateData.round_number}.`);
       } else {
         setGameMessage(`${nextPlayer}'s turn`);
       }
@@ -242,3 +236,106 @@ export default function GamePage() {
 
   if (!currentGame) {
     return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
+        <div className="glass-panel rounded-2xl p-8 text-center max-w-md mx-4">
+          <Trophy className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-white mb-2">Game Not Found</h2>
+          <p className="text-slate-300 mb-6">The game you're looking for doesn't exist or has been removed.</p>
+          <Button 
+            onClick={() => navigate(createPageUrl("Home"))}
+            className="bg-cyan-500 hover:bg-cyan-600 text-white px-6 py-2 rounded-lg transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Home
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-4 md:p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-2">
+              <Target className="w-8 h-8 text-cyan-400" />
+              {currentGame.game_name}
+            </h1>
+            <p className="text-slate-400 mt-1">{currentGame.player1_name} vs {currentGame.player2_name}</p>
+          </div>
+          
+          <div className="flex gap-2">
+            <Button 
+              onClick={resetGame}
+              variant="outline"
+              className="border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10"
+            >
+              <RotateCcw className="w-4 h-4 mr-2" />
+              Reset Game
+            </Button>
+            <Button 
+              onClick={() => navigate(createPageUrl("Home"))}
+              variant="outline"
+              className="border-slate-500/30 text-slate-300 hover:bg-slate-500/10"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Leave Game
+            </Button>
+          </div>
+        </div>
+
+        {/* Game Message */}
+        {gameMessage && (
+          <div className="mb-6 p-4 bg-cyan-500/10 border border-cyan-400/20 rounded-xl text-center">
+            <p className="text-cyan-300 font-medium">{gameMessage}</p>
+          </div>
+        )}
+
+        {/* Main Game Area */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Panel - Score and Controls */}
+          <div className="lg:col-span-1 space-y-6">
+            <ScorePanel 
+              player1Name={currentGame.player1_name}
+              player2Name={currentGame.player2_name}
+              player1Score={currentGame.player1_score}
+              player2Score={currentGame.player2_score}
+              targetScore={currentGame.target_score}
+              currentTurn={currentGame.current_turn}
+              roundNumber={currentGame.round_number || 1}
+            />
+            
+            <GameControls 
+              currentTurn={currentGame.current_turn}
+              player1Name={currentGame.player1_name}
+              player2Name={currentGame.player2_name}
+              isGameFinished={currentGame.game_status === "finished"}
+            />
+          </div>
+
+          {/* Center Panel - Game Table */}
+          <div className="lg:col-span-2">
+            <div className="glass-panel rounded-2xl p-4 md:p-6">
+              <GameTable 
+                ballPositions={currentGame.ball_positions}
+                onBallMove={handleBallMove}
+                currentTurn={currentGame.current_turn}
+                isGameFinished={currentGame.game_status === "finished"}
+                selectedBall={selectedBall}
+                setSelectedBall={setSelectedBall}
+                aimDirection={aimDirection}
+                setAimDirection={setAimDirection}
+                aimPower={aimPower}
+                setAimPower={setAimPower}
+                isAiming={isAiming}
+                setIsAiming={setIsAiming}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
