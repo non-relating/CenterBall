@@ -244,3 +244,63 @@ export default function GameTable({ game, onBallMove, selectedBall, setSelectedB
     // Center ring (glowing)
     const ringGeometry = new THREE.RingGeometry(48, 52, 64);
     const ringMaterial = new THREE.MeshBasicMaterial({
+      color: 0x00ffff,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.8
+    });
+    const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+    ring.position.z = 1; // Just above the table surface
+    scene.add(ring);
+
+    createBalls();
+
+    // Animation loop
+    const animate = () => {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+    };
+    animate();
+
+    // Handle window resize
+    const handleResize = () => {
+      if (mountElement && renderer && camera) {
+        camera.aspect = mountElement.clientWidth / mountElement.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(mountElement.clientWidth, mountElement.clientHeight);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup on unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (mountElement && renderer.domElement) {
+        mountElement.removeChild(renderer.domElement);
+      }
+    };
+  }, [game, createBalls]);
+
+  useEffect(() => {
+    // Update ball positions when game state changes
+    if (game && ballMeshesRef.current) {
+      Object.values(ballMeshesRef.current).forEach(ballMesh => {
+        let ballData;
+        if (ballMesh.userData.type === 'center') {
+          ballData = game.ball_positions.center_ball;
+        } else if (ballMesh.userData.type === 'player1') {
+          ballData = game.ball_positions.player1_balls.find(b => b.id === ballMesh.userData.id);
+        } else if (ballMesh.userData.type === 'player2') {
+          ballData = game.ball_positions.player2_balls.find(b => b.id === ballMesh.userData.id);
+        }
+        
+        if (ballData) {
+          ballMesh.position.set(ballData.x, ballData.y, 8);
+          ballMesh.visible = ballData.active;
+        }
+      });
+    }
+  }, [game?.ball_positions]);
+
+  return <div ref={mountRef} className="w-full h-full rounded-lg overflow-hidden" />;
+}
