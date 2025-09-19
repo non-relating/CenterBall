@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from "react";
 import { Game } from "@/entities/Game";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
+import { Badge } from "@/Components/ui/badge";
 import { Trophy, Crown, Target, TrendingUp } from "lucide-react";
 
 export default function LeaderboardPage() {

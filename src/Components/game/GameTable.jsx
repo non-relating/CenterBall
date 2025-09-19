@@ -130,11 +130,18 @@ export default function GameTable({ ballPositions, onBallSelect, selectedBall, c
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x08080a);
     
-    const camera = new THREE.PerspectiveCamera(75, mountElement.clientWidth / mountElement.clientHeight, 0.1, 1000);
-    camera.position.set(0, 0, 450);
+    // Camera: adapt fov and distance for small screens (mobile-first)
+    const isMobile = window.matchMedia && window.matchMedia('(max-width: 640px)').matches;
+    const cameraDistance = isMobile ? 500 : 450;
+    const fov = isMobile ? 85 : 75;
+    const camera = new THREE.PerspectiveCamera(fov, mountElement.clientWidth / mountElement.clientHeight, 0.1, 2000);
+    camera.position.set(0, 0, cameraDistance);
     
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(mountElement.clientWidth, mountElement.clientHeight);
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  // Use device pixel ratio but cap it for performance on mobile
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  renderer.setPixelRatio(dpr);
+  renderer.setSize(mountElement.clientWidth, mountElement.clientHeight);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.physicallyCorrectLights = true;
@@ -274,7 +281,16 @@ export default function GameTable({ ballPositions, onBallSelect, selectedBall, c
         }
       }
     };
+    // Support touch and pointer events for mobile
     renderer.domElement.addEventListener('click', handleClick);
+    renderer.domElement.addEventListener('touchstart', (ev) => {
+      // Map first touch to click coords
+      const touch = ev.touches && ev.touches[0];
+      if (touch) handleClick(touch);
+    }, { passive: true });
+
+    // Enable pointer events for improved compat
+    renderer.domElement.style.touchAction = 'manipulation';
 
     // Animation loop
     const animate = () => {
@@ -286,9 +302,13 @@ export default function GameTable({ ballPositions, onBallSelect, selectedBall, c
     // Handle window resize
     const handleResize = () => {
       if (mountElement && renderer && camera) {
-        camera.aspect = mountElement.clientWidth / mountElement.clientHeight;
+        const w = mountElement.clientWidth;
+        const h = mountElement.clientHeight;
+        camera.aspect = w / h;
         camera.updateProjectionMatrix();
-        renderer.setSize(mountElement.clientWidth, mountElement.clientHeight);
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        renderer.setPixelRatio(dpr);
+        renderer.setSize(w, h);
       }
     };
     window.addEventListener('resize', handleResize);
@@ -297,6 +317,7 @@ export default function GameTable({ ballPositions, onBallSelect, selectedBall, c
     return () => {
       window.removeEventListener('resize', handleResize);
       renderer.domElement.removeEventListener('click', handleClick);
+      renderer.domElement.removeEventListener('touchstart', handleClick);
       if (mountElement && renderer.domElement) {
         mountElement.removeChild(renderer.domElement);
       }
@@ -323,6 +344,50 @@ export default function GameTable({ ballPositions, onBallSelect, selectedBall, c
       });
     }
   }, [ballPositions]);
+    // Simple top-down SVG overlay (fallback / debug) that maps to the same coordinate space
+    const renderOverlay = () => {
+      if (!ballPositions) return null;
 
+      const center = ballPositions.center_ball;
+      const p1 = ballPositions.player1_balls || [];
+      const p2 = ballPositions.player2_balls || [];
+
+      return (
+        <div className="absolute inset-0 pointer-events-none">
+          <svg viewBox="-200 -300 400 600" preserveAspectRatio="xMidYMid meet" className="w-full h-full">
+            {/* table background */}
+            <rect x="-200" y="-300" width="400" height="600" fill="rgba(10,92,21,0.06)" stroke="rgba(255,255,255,0.03)" />
+            {/* center ring */}
+            <circle cx="0" cy="0" r="52" fill="none" stroke="#00ffff" strokeOpacity="0.2" />
+
+            {/* center ball */}
+            {center && (
+              <circle cx={center.x} cy={center.y} r="8" fill="#ffffff" stroke="#ddd" strokeWidth="0.5" pointerEvents="auto" onClick={() => onBallSelect && onBallSelect(center, false)} />
+            )}
+
+            {/* player1 balls */}
+            {p1.map((b) => (
+              <g key={`p1-${b.id}`}>
+                <circle cx={b.x} cy={b.y} r="8" fill="#ff3333" pointerEvents="auto" onClick={() => onBallSelect && onBallSelect(b, true)} />
+              </g>
+            ))}
+
+            {/* player2 balls */}
+            {p2.map((b) => (
+              <g key={`p2-${b.id}`}>
+                <circle cx={b.x} cy={b.y} r="8" fill="#3333ff" pointerEvents="auto" onClick={() => onBallSelect && onBallSelect(b, false)} />
+              </g>
+            ))}
+          </svg>
+        </div>
+      );
+    };
+
+    return (
+      <div className="w-full h-full rounded-lg overflow-hidden relative">
+        <div ref={mountRef} className="w-full h-full" />
+        {renderOverlay()}
+      </div>
+    );
   return <div ref={mountRef} className="w-full h-full rounded-lg overflow-hidden" />;
 }

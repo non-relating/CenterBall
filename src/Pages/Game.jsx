@@ -3,10 +3,10 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Game } from "@/entities";
 import { createPageUrl } from "@/utils";
-import GameTable from "@/components/game/GameTable";
-import ScorePanel from "@/components/game/ScorePanel";
-import GameControls from "@/components/game/GameControls";
-import { Button } from "@/components/ui/button";
+import GameTable from "@/Components/game/GameTable";
+import ScorePanel from "@/Components/game/ScorePanel";
+import GameControls from "@/Components/game/GameControls";
+import { Button } from "@/Components/ui/button";
 import { Trophy, ArrowLeft, RotateCcw } from "lucide-react";
 
 export default function GamePage() {
@@ -252,7 +252,7 @@ export default function GamePage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col p-4 md:p-8 bg-gradient-to-br from-slate-900 to-slate-800 text-white">
+    <div className="min-h-screen flex flex-col p-3 md:p-8 bg-gradient-to-br from-slate-900 to-slate-800 text-white safe-bottom">
       {/* Header */}
       <header className="flex items-center justify-between mb-4 flex-wrap gap-4">
         <Button onClick={() => navigate(createPageUrl("Home"))} variant="ghost" className="text-slate-300 hover:text-white hover:bg-slate-700">
@@ -268,28 +268,35 @@ export default function GamePage() {
         </Button>
       </header>
 
-      {/* Main Content */}
-      <div className="flex-grow grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Left Panel / Score Panel */}
-        <div className="lg:col-span-1 glass-panel rounded-2xl p-6 flex flex-col order-2 lg:order-1">
-          <ScorePanel game={currentGame} />
-          <div className="mt-auto pt-4 border-t border-slate-700">
-              <h3 className="text-lg font-semibold mb-2 text-center">Game Status</h3>
-              <p className="text-center text-cyan-300 font-medium h-12 flex items-center justify-center">{gameMessage}</p>
-          </div>
-        </div>
-
-        {/* Game Area */}
-        <div className="lg:col-span-3 relative glass-panel rounded-2xl overflow-hidden order-1 lg:order-2 aspect-video lg:aspect-auto">
+      {/* Main Content - mobile-first stacked layout */}
+      <div className="flex-grow flex flex-col gap-4">
+        {/* Game Area (top) */}
+        <div className="w-full glass-panel rounded-2xl overflow-hidden relative game-full-mobile">
           <GameTable 
             ballPositions={currentGame.ball_positions}
             onBallSelect={handleBallSelect}
             selectedBall={selectedBall}
             currentTurn={currentGame.current_turn}
           />
-          {isAiming && selectedBall && (
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-slate-900/50 backdrop-blur-sm">
+        </div>
+
+        {/* Score and status (below) */}
+        <div className="w-full glass-panel rounded-2xl p-4 flex flex-col">
+          <ScorePanel game={currentGame} />
+          <div className="mt-3 pt-3 border-t border-slate-700">
+              <h3 className="text-lg font-semibold mb-2 text-center">Game Status</h3>
+              <p className="text-center text-cyan-300 font-medium h-12 flex items-center justify-center">{gameMessage}</p>
+          </div>
+        </div>
+
+        {/* Controls - bottom safe area, large touch targets */}
+        {isAiming && selectedBall && (
+          <div className="w-full fixed bottom-0 left-0 right-0 p-3 bg-slate-900/80 backdrop-blur-sm border-t border-slate-700 safe-bottom">
+            <div className="max-w-3xl mx-auto">
               <GameControls
+                game={currentGame}
+                selectedBall={selectedBall}
+                onAimChange={(d) => setAimData(d)}
                 onShoot={handleShoot}
                 onCancel={() => {
                   setIsAiming(false);
@@ -297,8 +304,8 @@ export default function GamePage() {
                 }}
               />
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

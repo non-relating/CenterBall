@@ -1,7 +1,7 @@
 
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
+import { Badge } from "@/Components/ui/badge";
 import { Trophy, Target, Users, Crown, Disc3, Zap } from "lucide-react";
 
 export default function ScorePanel({ game, gameMessage }) {
