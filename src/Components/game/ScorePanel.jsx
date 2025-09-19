@@ -2,33 +2,47 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, Target, Users, Crown, Disc3 } from "lucide-react";
+import { Trophy, Target, Users, Crown, Disc3, Zap } from "lucide-react";
 
-export default function ScorePanel({ game }) {
-  if (!game) return null;
+export default function ScorePanel({ currentGame, gameMessage }) {
+  if (!currentGame) return null;
 
-  const isGameFinished = game.game_status === "finished";
-  const currentPlayerTurn = game.current_turn === 1 ? game.player1_name : game.player2_name;
+  const { 
+    player1_name, 
+    player2_name, 
+    player1_score, 
+    player2_score, 
+    target_score, 
+    current_turn,
+    round_number
+  } = currentGame;
+
+  const isPlayer1Turn = current_turn === 1;
 
   return (
     <div className="space-y-4 h-full">
       {/* Game Status */}
       <div className="glass-panel rounded-2xl p-4">
         <div className="text-center">
-          {isGameFinished ? (
-            <div>
-              <Crown className="w-8 h-8 text-yellow-400 mx-auto mb-2 neon-glow" />
-              <p className="text-yellow-400 font-bold text-lg">{game.winner} Wins!</p>
-              <p className="text-gray-300 text-sm">Game Complete</p>
-            </div>
-          ) : (
-            <div>
-              <Target className="w-6 h-6 text-cyan-400 mx-auto mb-2" /> {/* Changed from Users to Target */}
-              <p className="text-white font-medium">{currentPlayerTurn}</p>
-              <p className="text-gray-300 text-sm">Your Turn</p>
-            </div>
-          )}
+          <div className={`text-center p-3 rounded-lg transition-all duration-300 ${isPlayer1Turn ? 'bg-cyan-400/20 shadow-lg' : ''}`}>
+            <p className="text-lg font-bold text-white">{player1_name}</p>
+            <p className="text-3xl font-bold text-cyan-400">{player1_score}</p>
+          </div>
+          <div className="text-center">
+            <p className="text-sm text-slate-400">Round {round_number || 1}</p>
+            <Trophy className="w-8 h-8 text-yellow-400 mx-auto" />
+            <p className="text-sm text-slate-400">Target: {target_score}</p>
+          </div>
+          <div className={`text-center p-3 rounded-lg transition-all duration-300 ${!isPlayer1Turn ? 'bg-purple-400/20 shadow-lg' : ''}`}>
+            <p className="text-lg font-bold text-white">{player2_name}</p>
+            <p className="text-3xl font-bold text-purple-400">{player2_score}</p>
+          </div>
         </div>
+      </div>
+
+      {/* Game Message */}
+      <div className="text-center bg-slate-900/50 rounded-lg p-3 mt-4">
+        <p className="text-white font-semibold animate-pulse">{gameMessage}</p>
       </div>
 
       {/* Scores */}
@@ -41,27 +55,27 @@ export default function ScorePanel({ game }) {
         </CardHeader>
         <CardContent className="p-0 space-y-4">
           {/* Player 1 */}
-          <div className={`glass-panel rounded-xl p-3 ${game.current_turn === 1 ? 'border-red-400/50' : ''}`}>
+          <div className={`glass-panel rounded-xl p-3 ${current_turn === 1 ? 'border-red-400/50' : ''}`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-red-400"></div>
-                <span className="text-white font-medium">{game.player1_name}</span>
+                <span className="text-white font-medium">{player1_name}</span>
               </div>
               <div className="text-2xl font-bold text-red-400">
-                {game.player1_score}
+                {player1_score}
               </div>
             </div>
           </div>
 
           {/* Player 2 */}
-          <div className={`glass-panel rounded-xl p-3 ${game.current_turn === 2 ? 'border-blue-400/50' : ''}`}>
+          <div className={`glass-panel rounded-xl p-3 ${current_turn === 2 ? 'border-blue-400/50' : ''}`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-full bg-blue-400"></div>
-                <span className="text-white font-medium">{game.player2_name}</span>
+                <span className="text-white font-medium">{player2_name}</span>
               </div>
               <div className="text-2xl font-bold text-blue-400">
-                {game.player2_score}
+                {player2_score}
               </div>
             </div>
           </div>
@@ -70,7 +84,7 @@ export default function ScorePanel({ game }) {
           <div className="text-center pt-2 border-t border-white/10">
             <Badge variant="outline" className="border-gray-400/30 text-gray-300">
               <Target className="w-3 h-3 mr-1" />
-              First to {game.target_score}
+              First to {target_score}
             </Badge>
           </div>
         </CardContent>
@@ -86,7 +100,7 @@ export default function ScorePanel({ game }) {
         </CardHeader>
         <CardContent className="p-0">
           <div className="flex items-center justify-center gap-2">
-            <div className={`w-8 h-8 rounded-full ${game.current_turn === 1 ? 'bg-red-500' : 'bg-blue-500'} border-2 border-white/50 shadow-lg`}></div>
+            <div className={`w-8 h-8 rounded-full ${current_turn === 1 ? 'bg-red-500' : 'bg-blue-500'} border-2 border-white/50 shadow-lg`}></div>
             <span className="text-gray-300 text-sm">Ready to play</span>
           </div>
         </CardContent>
@@ -133,14 +147,14 @@ export default function ScorePanel({ game }) {
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
             <span className="text-gray-300">Round:</span>
-            <span className="text-white font-medium">{game.round_number || 1}</span>
+            <span className="text-white font-medium">{round_number || 1}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-300">Mode:</span>
             <Badge variant="outline" className={`border-gray-400/30 text-xs ${
-              game.target_score === 21 ? 'text-green-400' : 'text-red-400'
+              target_score === 21 ? 'text-green-400' : 'text-red-400'
             }`}>
-              {game.target_score === 21 ? 'Beginner' : 'Veteran'}
+              {target_score === 21 ? 'Beginner' : 'Veteran'}
             </Badge>
           </div>
         </div>

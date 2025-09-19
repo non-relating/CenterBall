@@ -6,17 +6,17 @@ import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { ArrowLeft, RotateCcw, Trophy, Target, Zap, Crown } from "lucide-react";
 import * as THREE from "three";
-import GameTable from "../components/game/GameTable";
-import ScorePanel from "../components/game/ScorePanel";
-import GameControls from "../components/game/GameControls";
+import GameTable from "../Components/game/Gametable";
+import ScorePanel from "../Components/game/ScorePanel";
+import GameControls from "../Components/game/GameControls";
 
 export default function GamePage() {
   const navigate = useNavigate();
   const [currentGame, setCurrentGame] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedBall, setSelectedBall] = useState(null);
-  const [aimDirection, setAimDirection] = useState({ x: 0, y: 0 });
-  const [aimPower, setAimPower] = useState(0);
+  const [aimDirection, setAimDirection] = useState({ x: 0, y: 1 });
+  const [aimPower, setAimPower] = useState(50);
   const [isAiming, setIsAiming] = useState(false);
   const [gameMessage, setGameMessage] = useState("");
 
@@ -197,6 +197,14 @@ export default function GamePage() {
     }
   }, [currentGame, calculateScore]);
 
+  const handleBallSelect = (ball, isPlayer1) => {
+    if (isAiming) return;
+    if (currentGame.current_turn !== (isPlayer1 ? 1 : 2)) return;
+    
+    setSelectedBall({ ...ball, isPlayer1 });
+    setIsAiming(true);
+  };
+
   const resetGame = async () => {
     if (!currentGame) return;
     
@@ -331,6 +339,7 @@ export default function GamePage() {
                 setAimPower={setAimPower}
                 isAiming={isAiming}
                 setIsAiming={setIsAiming}
+                onBallSelect={handleBallSelect}
               />
             </div>
           </div>

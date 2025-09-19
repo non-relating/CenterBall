@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
-import { Move, RotateCw, Target, Zap } from "lucide-react";
+import { Move, RotateCw, Target, Zap, RotateCcw } from "lucide-react";
 export default function GameControls({ game, selectedBall, onBallMove }) {
   const [aimAngle, setAimAngle] = useState([0]);
   const [power, setPower] = useState([50]);
@@ -43,6 +43,15 @@ export default function GameControls({ game, selectedBall, onBallMove }) {
   const canCurrentPlayerMove = () => {
     if (!selectedBall || !game) return false;
     return getCurrentPlayerTurn() === selectedBall.isPlayer1;
+  };
+
+  const onResetAim = () => {
+    setAimAngle([0]);
+    setPower([50]);
+  };
+
+  const onShoot = () => {
+    handleMove();
   };
 
   return (
@@ -135,23 +144,16 @@ export default function GameControls({ game, selectedBall, onBallMove }) {
               />
             </div>
 
-            <Button
-              onClick={handleMove}
-              disabled={isMoving}
-              className="w-full bg-gradient-to-r from-magenta-500 to-yellow-500 hover:from-magenta-600 hover:to-yellow-600 text-white font-bold py-3 rounded-xl neon-glow transition-all duration-300"
-            >
-              {isMoving ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-                  <span>Moving...</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <Zap className="w-5 h-5" />
-                  <span>Shoot</span>
-                </div>
-              )}
-            </Button>
+            <div className="flex gap-2">
+              <Button onClick={onResetAim} variant="outline" className="w-full">
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Cancel
+              </Button>
+              <Button onClick={onShoot} className="w-full bg-green-500 hover:bg-green-600">
+                <Zap className="w-4 h-4 mr-2" />
+                Shoot
+              </Button>
+            </div>
           </CardContent>
         </div>
       )}
