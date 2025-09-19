@@ -9,7 +9,7 @@ export default function GameControls({
   selectedBall, 
   onAimChange,
   onShoot,
-  onCancelAim,
+  onCancel,
 }) {
   const [aimAngle, setAimAngle] = useState([0]);
   const [power, setPower] = useState([50]);
@@ -32,8 +32,8 @@ export default function GameControls({
   const handleResetAim = () => {
     setAimAngle([0]);
     setPower([50]);
-    if (onCancelAim) {
-      onCancelAim();
+    if (onCancel) {
+      onCancel();
     }
   };
 

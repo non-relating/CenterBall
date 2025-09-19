@@ -2,7 +2,7 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import * as THREE from "three";
 
-export default function GameTable({ game, onBallMove, selectedBall, setSelectedBall }) {
+export default function GameTable({ ballPositions, onBallSelect, selectedBall, currentTurn }) {
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const rendererRef = useRef(null);
@@ -12,7 +12,7 @@ export default function GameTable({ game, onBallMove, selectedBall, setSelectedB
   const [isDragging, setIsDragging] = useState(false);
 
   const createBalls = useCallback(() => {
-    if (!game || !sceneRef.current) return;
+    if (!ballPositions || !sceneRef.current) return;
     
     // Clear existing balls
     Object.values(ballMeshesRef.current).forEach(ball => {
@@ -34,8 +34,8 @@ export default function GameTable({ game, onBallMove, selectedBall, setSelectedB
     });
     const centerBall = new THREE.Mesh(ballGeometry, centerBallMaterial);
     centerBall.position.set(
-      game.ball_positions.center_ball.x, 
-      game.ball_positions.center_ball.y, 
+      ballPositions.center_ball.x,
+      ballPositions.center_ball.y,
       8
     );
     centerBall.castShadow = true;
@@ -56,10 +56,10 @@ export default function GameTable({ game, onBallMove, selectedBall, setSelectedB
       opacity: 0.95
     });
     
-    game.ball_positions.player1_balls.forEach(ball => {
+  ballPositions.player1_balls.forEach(ball => {
       if (ball.active) {
         const ballMesh = new THREE.Mesh(ballGeometry, player1Material);
-        ballMesh.position.set(ball.x, ball.y, 8);
+  ballMesh.position.set(ball.x, ball.y, 8);
         ballMesh.castShadow = true;
         ballMesh.receiveShadow = true;
         ballMesh.userData = { id: ball.id, type: 'player1', isPlayer1: true };
@@ -80,10 +80,10 @@ export default function GameTable({ game, onBallMove, selectedBall, setSelectedB
       opacity: 0.95
     });
     
-    game.ball_positions.player2_balls.forEach(ball => {
+  ballPositions.player2_balls.forEach(ball => {
       if (ball.active) {
         const ballMesh = new THREE.Mesh(ballGeometry, player2Material);
-        ballMesh.position.set(ball.x, ball.y, 8);
+  ballMesh.position.set(ball.x, ball.y, 8);
         ballMesh.castShadow = true;
         ballMesh.receiveShadow = true;
         ballMesh.userData = { id: ball.id, type: 'player2', isPlayer1: false };
@@ -282,16 +282,16 @@ export default function GameTable({ game, onBallMove, selectedBall, setSelectedB
   }, [game, createBalls]);
 
   useEffect(() => {
-    // Update ball positions when game state changes
-    if (game && ballMeshesRef.current) {
+    // Update ball positions when ballPositions prop changes
+    if (ballPositions && ballMeshesRef.current) {
       Object.values(ballMeshesRef.current).forEach(ballMesh => {
         let ballData;
         if (ballMesh.userData.type === 'center') {
-          ballData = game.ball_positions.center_ball;
+          ballData = ballPositions.center_ball;
         } else if (ballMesh.userData.type === 'player1') {
-          ballData = game.ball_positions.player1_balls.find(b => b.id === ballMesh.userData.id);
+          ballData = ballPositions.player1_balls.find(b => b.id === ballMesh.userData.id);
         } else if (ballMesh.userData.type === 'player2') {
-          ballData = game.ball_positions.player2_balls.find(b => b.id === ballMesh.userData.id);
+          ballData = ballPositions.player2_balls.find(b => b.id === ballMesh.userData.id);
         }
         
         if (ballData) {
@@ -300,7 +300,7 @@ export default function GameTable({ game, onBallMove, selectedBall, setSelectedB
         }
       });
     }
-  }, [game?.ball_positions]);
+  }, [ballPositions]);
 
   return <div ref={mountRef} className="w-full h-full rounded-lg overflow-hidden" />;
 }
