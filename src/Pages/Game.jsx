@@ -11,7 +11,7 @@ import { Trophy, ArrowLeft, RotateCcw } from "lucide-react";
 
 export default function GamePage() {
   const navigate = useNavigate();
-  const searchParams = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [currentGame, setCurrentGame] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedBall, setSelectedBall] = useState(null);

@@ -120,7 +120,7 @@ export default function GameTable({ ballPositions, onBallSelect, selectedBall, c
     } else {
       return ballY <= -200; // Player 2 start zone barrier
     }
-  }, [game]);
+  }, [currentTurn]);
 
   useEffect(() => {
     const mountElement = mountRef.current;

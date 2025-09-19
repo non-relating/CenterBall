@@ -1,7 +1,18 @@
 import React from 'react';
 
 export function Select({ children, value, onValueChange }) {
-  return <div>{React.cloneElement(children, { value, onChange: (e) => onValueChange(e.target.value) })}</div>;
+  const mapped = React.Children.map(children, (child) => {
+    if (!React.isValidElement(child)) return child;
+    // Pass value and onChange only to elements that can accept them
+    return React.cloneElement(child, {
+      value,
+      onChange: (e) => {
+        if (onValueChange) onValueChange(e && e.target ? e.target.value : e);
+      },
+    });
+  });
+
+  return <div>{mapped}</div>;
 }
 
 export function SelectTrigger({ children, className = '' }) {
