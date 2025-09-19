@@ -7,4 +7,8 @@ export function createPageUrl(name) {
   return routes[name] || '/';
 }
 
-export default { createPageUrl };
+export function cn(...classes) {
+  return classes.filter(Boolean).join(' ');
+}
+
+export default { createPageUrl, cn };

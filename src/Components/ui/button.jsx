@@ -1,5 +1,5 @@
 import * as React from "react"
-import { cn } from "@/utils"
+import { cn } from "@/utils/index"
 
 const Button = React.forwardRef(({ className, variant = "default", size = "default", ...props }, ref) => {
   const variants = {
