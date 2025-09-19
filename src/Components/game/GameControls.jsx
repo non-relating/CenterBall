@@ -1,40 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Move, RotateCw, Target, Zap, RotateCcw } from "lucide-react";
-export default function GameControls({ game, selectedBall, onBallMove }) {
+
+export default function GameControls({ 
+  game, 
+  selectedBall, 
+  onAimChange,
+  onShoot,
+  onCancelAim,
+}) {
   const [aimAngle, setAimAngle] = useState([0]);
   const [power, setPower] = useState([50]);
-  const [isMoving, setIsMoving] = useState(false);
 
-  const handleMove = async () => {
-    if (!selectedBall || !game) return;
-    
-    setIsMoving(true);
-    
-    // Calculate movement based on angle and power
-    const angleRad = (aimAngle[0] * Math.PI) / 180;
-    const distance = power[0] * 2; // Scale power to movement distance
-    
-    const deltaX = Math.cos(angleRad) * distance;
-    const deltaY = Math.sin(angleRad) * distance;
-    
-    // Get current position
-    const currentBalls = selectedBall.isPlayer1 ? 
-      game.ball_positions.player1_balls : 
-      game.ball_positions.player2_balls;
-      
-    const currentBall = currentBalls.find(b => b.id === selectedBall.id);
-    if (currentBall) {
-      const newX = Math.max(-180, Math.min(180, currentBall.x + deltaX));
-      const newY = Math.max(-280, Math.min(280, currentBall.y + deltaY));
-      
-      await onBallMove(selectedBall.id, { x: newX, y: newY }, selectedBall.isPlayer1);
+  useEffect(() => {
+    if (onAimChange) {
+      onAimChange({ angle: aimAngle[0], power: power[0] });
     }
-    
-    setTimeout(() => setIsMoving(false), 1000);
-  };
+  }, [aimAngle, power, onAimChange]);
 
   const getCurrentPlayerTurn = () => {
     return game?.current_turn === 1;
@@ -45,13 +29,18 @@ export default function GameControls({ game, selectedBall, onBallMove }) {
     return getCurrentPlayerTurn() === selectedBall.isPlayer1;
   };
 
-  const onResetAim = () => {
+  const handleResetAim = () => {
     setAimAngle([0]);
     setPower([50]);
+    if (onCancelAim) {
+      onCancelAim();
+    }
   };
 
-  const onShoot = () => {
-    handleMove();
+  const handleShoot = () => {
+    if (onShoot) {
+      onShoot({ angle: aimAngle[0], power: power[0] });
+    }
   };
 
   return (
@@ -71,7 +60,7 @@ export default function GameControls({ game, selectedBall, onBallMove }) {
                 <span className="text-gray-300">Selected Ball:</span>
                 <div className="flex items-center gap-2">
                   <div className={`w-4 h-4 rounded-full ${
-                    selectedBall.isPlayer1 ? 'bg-red-400' : 'bg-blue-400'
+                    selectedBall.isPlayer1 ? 'bg-cyan-400' : 'bg-purple-400'
                   }`}></div>
                   <span className="text-white font-medium">Ball #{selectedBall.id}</span>
                 </div>
@@ -145,11 +134,11 @@ export default function GameControls({ game, selectedBall, onBallMove }) {
             </div>
 
             <div className="flex gap-2">
-              <Button onClick={onResetAim} variant="outline" className="w-full">
+              <Button onClick={handleResetAim} variant="outline" className="w-full">
                 <RotateCcw className="w-4 h-4 mr-2" />
                 Cancel
               </Button>
-              <Button onClick={onShoot} className="w-full bg-green-500 hover:bg-green-600">
+              <Button onClick={handleShoot} className="w-full bg-green-500 hover:bg-green-600">
                 <Zap className="w-4 h-4 mr-2" />
                 Shoot
               </Button>
