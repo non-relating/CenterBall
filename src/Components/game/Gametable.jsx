@@ -91,12 +91,10 @@ export default function GameTable({ ballPositions, onBallSelect, selectedBall, c
         ballMeshesRef.current[`p2_${ball.id}`] = ballMesh;
       }
     });
-  }, [game]);
+  }, [ballPositions]);
 
   const getCurrentPlayerBalls = useCallback(() => {
-    if (!game) return [];
-    
-    const currentPlayer = game.current_turn;
+    const currentPlayer = currentTurn;
     return Object.values(ballMeshesRef.current).filter(ball => {
       if (currentPlayer === 1) {
         return ball.userData.type === 'player1';
@@ -104,12 +102,12 @@ export default function GameTable({ ballPositions, onBallSelect, selectedBall, c
         return ball.userData.type === 'player2';
       }
     });
-  }, [game]);
+  }, [currentTurn]);
 
   const canMoveBall = useCallback((ball) => {
-    if (!ball || !game) return false;
+    if (!ball) return false;
     
-    const currentPlayer = game.current_turn;
+    const currentPlayer = currentTurn;
     const isCurrentPlayerBall = (currentPlayer === 1 && ball.userData.type === 'player1') || 
                                (currentPlayer === 2 && ball.userData.type === 'player2');
     
@@ -126,7 +124,7 @@ export default function GameTable({ ballPositions, onBallSelect, selectedBall, c
 
   useEffect(() => {
     const mountElement = mountRef.current;
-    if (!mountElement || !game) return;
+    if (!mountElement) return;
 
     // Scene setup
     const scene = new THREE.Scene();
@@ -255,6 +253,29 @@ export default function GameTable({ ballPositions, onBallSelect, selectedBall, c
 
     createBalls();
 
+    // Raycaster for clicking/selecting balls
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    const handleClick = (event) => {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(Object.values(ballMeshesRef.current));
+      if (intersects.length > 0) {
+        const mesh = intersects[0].object;
+        const id = mesh.userData.id;
+        const isPlayer1 = mesh.userData.isPlayer1 === true;
+        if (onBallSelect) {
+          const list = isPlayer1 ? ballPositions.player1_balls : ballPositions.player2_balls;
+          const ballData = list.find(b => b.id === id);
+          onBallSelect(ballData, isPlayer1);
+        }
+      }
+    };
+    renderer.domElement.addEventListener('click', handleClick);
+
     // Animation loop
     const animate = () => {
       requestAnimationFrame(animate);
@@ -275,11 +296,12 @@ export default function GameTable({ ballPositions, onBallSelect, selectedBall, c
     // Cleanup on unmount
     return () => {
       window.removeEventListener('resize', handleResize);
+      renderer.domElement.removeEventListener('click', handleClick);
       if (mountElement && renderer.domElement) {
         mountElement.removeChild(renderer.domElement);
       }
     };
-  }, [game, createBalls]);
+  }, [ballPositions, createBalls, currentTurn, onBallSelect]);
 
   useEffect(() => {
     // Update ball positions when ballPositions prop changes

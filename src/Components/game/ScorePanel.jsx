@@ -4,8 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Target, Users, Crown, Disc3, Zap } from "lucide-react";
 
-export default function ScorePanel({ currentGame, gameMessage }) {
-  if (!currentGame) return null;
+export default function ScorePanel({ game, gameMessage }) {
+  if (!game) return null;
 
   const { 
     player1_name, 
@@ -15,7 +15,7 @@ export default function ScorePanel({ currentGame, gameMessage }) {
     target_score, 
     current_turn,
     round_number
-  } = currentGame;
+  } = game;
 
   const isPlayer1Turn = current_turn === 1;
 
