@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from 'prop-types';
 import { Button } from "@/Components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Slider } from "@/Components/ui/slider";
 import { Move, RotateCw, Target, Zap, RotateCcw } from "lucide-react";
 
@@ -61,7 +62,7 @@ export default function GameControls({
                   <RotateCw className="w-5 h-5 text-cyan-400" />
                   <span className="text-gray-300">Angle</span>
                 </div>
-                <span className="text-white font-medium">{aimAngle[0]}0</span>
+                <span className="text-white font-medium">{aimAngle[0]}°</span>
               </div>
               <div className="touch-slider">
                 <Slider
@@ -160,3 +161,15 @@ export default function GameControls({
     </div>
   );
 }
+
+GameControls.propTypes = {
+  game: PropTypes.shape({
+    current_turn: PropTypes.number,
+  }),
+  selectedBall: PropTypes.shape({
+    isPlayer1: PropTypes.bool,
+  }),
+  onAimChange: PropTypes.func,
+  onShoot: PropTypes.func,
+  onCancel: PropTypes.func,
+};

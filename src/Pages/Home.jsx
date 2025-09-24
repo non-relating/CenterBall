@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { Game } from "@/entities";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Badge } from "@/Components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -18,7 +19,6 @@ import {
 export default function HomePage() {
   const navigate = useNavigate();
   const [games, setGames] = useState([]);
-  const [showNewGame, setShowNewGame] = useState(false);
   const [player1Name, setPlayer1Name] = useState("");
   const [player2Name, setPlayer2Name] = useState("");
   const [targetScore, setTargetScore] = useState("21");
@@ -286,3 +286,5 @@ export default function HomePage() {
     </div>
   );
 }
+
+HomePage.propTypes = {};

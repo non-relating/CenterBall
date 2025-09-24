@@ -18,30 +18,11 @@
     "react"
   ],
   "rules": {
-    "es-x/no-modules": "off",
-    "es-x/no-destructuring": "off",
-    "es-x/no-block-scoped-variables": "off",
-    "es-x/no-arrow-functions": "off",
-    "fp/no-nil": "off",
-    "unicorn/no-array-for-each": "off",
     "no-unused-vars": "warn"
   },
   "settings": {
     "react": {
       "version": "detect"
-    },
-    "import/resolver": {
-      "node": {
-        "paths": [
-          "src"
-        ],
-        "extensions": [
-          ".js",
-          ".jsx",
-          ".ts",
-          ".tsx"
-        ]
-      }
     }
   },
   "ignorePatterns": [

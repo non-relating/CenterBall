@@ -133,8 +133,8 @@ export default function GameTable({
     [currentTurn],
   );
 
-  // Added helper function to extract complex useEffect logic
-  function handleGameTableEffect() {
+  // Added useEffect to handle complex setup logic
+  useEffect(() => {
     const mountElement = mountRef.current;
     if (!mountElement) return;
 

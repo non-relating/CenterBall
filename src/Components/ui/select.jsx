@@ -1,4 +1,5 @@
 import * as React from "react";
+import PropTypes from "prop-types";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/utils/index";
 
@@ -21,6 +22,12 @@ const Select = ({ children, value, onValueChange }) => {
       <div className="relative">{children}</div>
     </SelectContext.Provider>
   );
+};
+
+Select.propTypes = {
+  children: PropTypes.node.isRequired,
+  value: PropTypes.any,
+  onValueChange: PropTypes.func,
 };
 
 const SelectTrigger = React.forwardRef(
@@ -46,9 +53,18 @@ const SelectTrigger = React.forwardRef(
 );
 SelectTrigger.displayName = "SelectTrigger";
 
+SelectTrigger.propTypes = {
+  className: PropTypes.string,
+  children: PropTypes.node,
+};
+
 const SelectValue = ({ placeholder }) => {
   const { selectedValue } = React.useContext(SelectContext);
   return <span>{selectedValue || placeholder}</span>;
+};
+
+SelectValue.propTypes = {
+  placeholder: PropTypes.string,
 };
 
 const SelectContent = React.forwardRef(
@@ -73,6 +89,11 @@ const SelectContent = React.forwardRef(
 );
 SelectContent.displayName = "SelectContent";
 
+SelectContent.propTypes = {
+  className: PropTypes.string,
+  children: PropTypes.node,
+};
+
 const SelectItem = React.forwardRef(
   ({ className, children, value, ...props }, ref) => {
     const { handleSelect } = React.useContext(SelectContext);
@@ -94,15 +115,33 @@ const SelectItem = React.forwardRef(
 );
 SelectItem.displayName = "SelectItem";
 
+SelectItem.propTypes = {
+  className: PropTypes.string,
+  children: PropTypes.node,
+  value: PropTypes.any.isRequired,
+};
+
 const SelectGroup = ({ children }) => <div>{children}</div>;
+SelectGroup.propTypes = {
+  children: PropTypes.node,
+};
+
 const SelectLabel = ({ children, className }) => (
   <div className={cn("py-1.5 pl-8 pr-2 text-sm font-semibold", className)}>
     {children}
   </div>
 );
+SelectLabel.propTypes = {
+  children: PropTypes.node,
+  className: PropTypes.string,
+};
+
 const SelectSeparator = ({ className }) => (
   <div className={cn("-mx-1 my-1 h-px bg-muted", className)} />
 );
+SelectSeparator.propTypes = {
+  className: PropTypes.string,
+};
 
 export {
   Select,

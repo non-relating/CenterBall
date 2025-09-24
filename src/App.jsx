@@ -1,3 +1,4 @@
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import HomePage from "./Pages/Home.jsx";
 import GamePage from "./Pages/Game.jsx"; // Pointing to your original Game.jsx file

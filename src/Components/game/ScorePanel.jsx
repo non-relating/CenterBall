@@ -1,5 +1,6 @@
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
+import PropTypes from 'prop-types';
+import { CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Badge } from "@/Components/ui/badge";
 import { Trophy, Target, Users, Crown, Disc3, Zap } from "lucide-react";
 
@@ -185,3 +186,16 @@ export default function ScorePanel({ game, gameMessage }) {
     </div>
   );
 }
+
+ScorePanel.propTypes = {
+  game: PropTypes.shape({
+    player1_name: PropTypes.string,
+    player2_name: PropTypes.string,
+    player1_score: PropTypes.number,
+    player2_score: PropTypes.number,
+    target_score: PropTypes.number,
+    current_turn: PropTypes.number,
+    round_number: PropTypes.number,
+  }),
+  gameMessage: PropTypes.string,
+};

@@ -1,4 +1,5 @@
 import * as React from "react";
+import PropTypes from "prop-types";
 import { cn } from "@/utils/index";
 
 const Label = React.forwardRef(({ className, ...props }, ref) => (
@@ -12,5 +13,9 @@ const Label = React.forwardRef(({ className, ...props }, ref) => (
   />
 ));
 Label.displayName = "Label";
+
+Label.propTypes = {
+  className: PropTypes.string,
+};
 
 export { Label };

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import {
   Card,
   CardContent,
@@ -24,7 +25,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/Components/ui/table";
-import { format } from "date-fns";
 import { Plus, Trash2, XCircle, CheckCircle } from "lucide-react";
 
 const CATEGORIES = [
@@ -261,7 +261,7 @@ export default function InvoicePreview({
                       colSpan={5}
                       className="text-center text-gray-500 py-4"
                     >
-                      No items added. Click "Add Item" to start.
+                      No items added. Click &quot;Add Item&quot; to start.
                     </TableCell>
                   </TableRow>
                 )}
@@ -298,3 +298,10 @@ export default function InvoicePreview({
     </Card>
   );
 }
+
+InvoicePreview.propTypes = {
+  extractedData: PropTypes.object.isRequired,
+  onSave: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  isProcessing: PropTypes.bool.isRequired,
+};

@@ -1,4 +1,5 @@
 import * as React from "react";
+import PropTypes from "prop-types";
 import { cn } from "@/utils/index";
 
 const Button = React.forwardRef(
@@ -36,5 +37,11 @@ const Button = React.forwardRef(
   },
 );
 Button.displayName = "Button";
+
+Button.propTypes = {
+  className: PropTypes.string,
+  variant: PropTypes.oneOf(['default', 'destructive', 'outline', 'secondary', 'ghost', 'link']),
+  size: PropTypes.oneOf(['default', 'sm', 'lg', 'icon']),
+};
 
 export { Button };

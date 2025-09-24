@@ -7,8 +7,9 @@
 /* codacy ignore ESLint8_import_no-unresolved */
 
 import React, { useState, useEffect, useCallback } from "react";
+import PropTypes from "prop-types";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Game } from "../../entities";
+import { Game } from "@/entities";
 import { createPageUrl } from "@/utils";
 import GameTable from "../Components/game/GameTable";
 import ScorePanel from "../Components/game/ScorePanel";
@@ -22,7 +23,6 @@ export default function GamePage() {
   const [currentGame, setCurrentGame] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedBall, setSelectedBall] = useState(null);
-  const [aimData, setAimData] = useState({ angle: 0, power: 50 });
   const [isAiming, setIsAiming] = useState(false);
   const [gameMessage, setGameMessage] = useState("");
 
@@ -40,7 +40,7 @@ export default function GamePage() {
         } else if (game.game_status === "playing") {
           const currentPlayer =
             game.current_turn === 1 ? game.player1_name : game.player2_name;
-          setGameMessage(`${currentPlayer}'s turn`);
+          setGameMessage(`${currentPlayer}&apos;s turn`);
         }
       } catch (error) {
         console.error("Error loading game:", error);
@@ -236,7 +236,7 @@ export default function GamePage() {
             `Round complete! ${nextRoundPlayer} starts round ${updateData.round_number}.`,
           );
         } else {
-          setGameMessage(`${nextPlayer}'s turn`);
+          setGameMessage(`${nextPlayer}&apos;s turn`);
         }
       } catch (error) {
         console.error("Error updating game:", error);
@@ -301,6 +301,8 @@ export default function GamePage() {
       </div>
     );
   }
+  
+  GamePage.propTypes = {};
 
   if (!currentGame) {
     return (
@@ -309,7 +311,7 @@ export default function GamePage() {
           <Trophy className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-white mb-2">Game Not Found</h2>
           <p className="text-slate-300 mb-6">
-            The game you're looking for doesn't exist or has been removed.
+            The game you&apos;re looking for doesn&apos;t exist or has been removed.
           </p>
           <Button
             onClick={() => navigate(createPageUrl("Home"))}
@@ -380,7 +382,6 @@ export default function GamePage() {
               <GameControls
                 game={currentGame}
                 selectedBall={selectedBall}
-                onAimChange={(d) => setAimData(d)}
                 onShoot={handleShoot}
                 onCancel={() => {
                   setIsAiming(false);

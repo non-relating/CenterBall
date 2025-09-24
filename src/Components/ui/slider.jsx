@@ -1,4 +1,5 @@
 import * as React from "react";
+import PropTypes from "prop-types";
 import { cn } from "@/utils/index";
 
 const Slider = React.forwardRef(
@@ -40,5 +41,14 @@ const Slider = React.forwardRef(
   },
 );
 Slider.displayName = "Slider";
+
+Slider.propTypes = {
+  className: PropTypes.string,
+  value: PropTypes.arrayOf(PropTypes.number),
+  onValueChange: PropTypes.func,
+  max: PropTypes.number,
+  min: PropTypes.number,
+  step: PropTypes.number,
+};
 
 export { Slider };

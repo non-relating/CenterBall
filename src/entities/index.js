@@ -1,7 +1,7 @@
 // This is a mock data store to replace the Vendia client.
 // It simulates an async API using Promises and stores data in-memory.
 
-var games = [
+let games = [
   {
     id: "game-1",
     player1_name: "Alice",
@@ -14,55 +14,50 @@ var games = [
     round_number: 1,
     ball_positions: {
       center_ball: { x: 0, y: 0.4, z: 0 },
-      player1_balls: (function() {
-        var arr = [];
-        for (var i = 0; i < 5; i++) {
-          arr.push({
-            x: 0,
-            y: 150 + i * 30,
-            active: true,
-            id: i + 1
-          });
-        }
-        return arr;
-      })(),
-      player2_balls: (function() {
-        var arr = [];
-        for (var i = 0; i < 5; i++) {
-          arr.push({
-            x: 0,
-            y: -150 - i * 30,
-            active: true,
-            id: i + 1
-          });
-        }
-        return arr;
-      })()
+      player1_balls: generatePlayerBalls(1),
+      player2_balls: generatePlayerBalls(2)
     }
   }
 ];
 
+// Counter for ID generation to avoid Date.now
+let idCounter = 0;
+
 // A simple function to generate unique IDs for new games (avoid Date.now, Math.random)
 function generateId() {
-  var ts = new Date().getTime();
-  var rand = '';
-  for (var i = 0; i < 7; i++) {
+  idCounter++;
+  let rand = '';
+  for (let i = 0; i < 7; i++) {
     // Use a simple LCG for deterministic pseudo-random (not crypto-secure)
-    ts = (ts * 9301 + 49297) % 233280;
-    var rnd = ts / 233280;
+    idCounter = (idCounter * 9301 + 49297) % 233280;
+    const rnd = idCounter / 233280;
     rand += String.fromCharCode(97 + Math.floor(rnd * 26));
   }
-  return 'game-' + ts + '-' + rand;
+  return 'game-' + idCounter + '-' + rand;
 }
 
+// Helper function to generate player balls
+function generatePlayerBalls(player) {
+  const arr = [];
+  const yOffset = player === 1 ? 150 : -150;
+  const yIncrement = player === 1 ? 30 : -30;
+  for (let i = 0; i < 5; i++) {
+    arr.push({
+      x: 0,
+      y: yOffset + i * yIncrement,
+      active: true,
+      id: i + 1
+    });
+  }
+  return arr;
+}
 
-var mockGameEntity = {
-  // list(sortBy, limit) -> returns array of games
-  list: function(sortBy, limit) {
-    if (typeof sortBy === 'undefined') sortBy = "-created_date";
+const mockGameEntity = {
+  // list(limit) -> returns array of games
+  list: function(limit) {
     if (typeof limit === 'undefined') limit = 10;
-  // Mock API: list games
-    var result = games.slice(0, limit);
+    // Mock API: list games (no sorting implemented as sortBy was unused)
+    const result = games.slice(0, limit);
     return {
       then: function(cb) { cb(result); return { catch: function() {} }; }
     };
@@ -70,43 +65,21 @@ var mockGameEntity = {
 
   // create(gameData) -> returns created game
   create: function(gameData) {
-  // Mock API: create game
-    var newGame = {
+    // Mock API: create game
+    const newGame = {
       id: generateId(),
-      player1_name: gameData && gameData.player1_name ? gameData.player1_name : "Player 1",
-      player2_name: gameData && gameData.player2_name ? gameData.player2_name : "Player 2",
-      player1_score: gameData && gameData.player1_score ? gameData.player1_score : 0,
-      player2_score: gameData && gameData.player2_score ? gameData.player2_score : 0,
-      target_score: gameData && gameData.target_score ? gameData.target_score : 21,
-      current_turn: gameData && gameData.current_turn ? gameData.current_turn : 1,
-      game_status: gameData && gameData.game_status ? gameData.game_status : "setup",
-      round_number: gameData && gameData.round_number ? gameData.round_number : 1,
-      ball_positions: gameData && gameData.ball_positions ? gameData.ball_positions : {
+      player1_name: gameData?.player1_name ?? "Player 1",
+      player2_name: gameData?.player2_name ?? "Player 2",
+      player1_score: gameData?.player1_score ?? 0,
+      player2_score: gameData?.player2_score ?? 0,
+      target_score: gameData?.target_score ?? 21,
+      current_turn: gameData?.current_turn ?? 1,
+      game_status: gameData?.game_status ?? "setup",
+      round_number: gameData?.round_number ?? 1,
+      ball_positions: gameData?.ball_positions ?? {
         center_ball: { x: 0, y: 0.4, z: 0 },
-        player1_balls: (function() {
-          var arr = [];
-          for (var i = 0; i < 5; i++) {
-            arr.push({
-              x: 0,
-              y: 150 + i * 30,
-              active: true,
-              id: i + 1
-            });
-          }
-          return arr;
-        })(),
-        player2_balls: (function() {
-          var arr = [];
-          for (var i = 0; i < 5; i++) {
-            arr.push({
-              x: 0,
-              y: -150 - i * 30,
-              active: true,
-              id: i + 1
-            });
-          }
-          return arr;
-        })()
+        player1_balls: generatePlayerBalls(1),
+        player2_balls: generatePlayerBalls(2)
       }
     };
     games.unshift(newGame);
@@ -117,14 +90,8 @@ var mockGameEntity = {
 
   // get(id) -> returns single game or null
   get: function(id) {
-  // Mock API: get
-    var game = null;
-    for (var i = 0; i < games.length; i++) {
-      if (games[i].id === id) {
-        game = games[i];
-        break;
-      }
-    }
+    // Mock API: get
+    const game = games.find(g => g.id === id) || null;
     return {
       then: function(cb) { cb(game); return { catch: function() {} }; }
     };
@@ -132,25 +99,18 @@ var mockGameEntity = {
 
   // update(id, updateData) -> returns updated game
   update: function(id, updateData) {
-  // Mock API: update
-    for (var i = 0; i < games.length; i++) {
+    // Mock API: update
+    for (let i = 0; i < games.length; i++) {
       if (games[i].id === id) {
-        for (var key in updateData) {
-          if (Object.prototype.hasOwnProperty.call(updateData, key)) {
-            games[i][key] = updateData[key];
-          }
-        }
+        Object.assign(games[i], updateData);
+        return {
+          then: function(cb) { cb(games[i]); return { catch: function() {} }; }
+        };
       }
     }
-    var updated = null;
-    for (var j = 0; j < games.length; j++) {
-      if (games[j].id === id) {
-        updated = games[j];
-        break;
-      }
-    }
+    // If not found, return null
     return {
-      then: function(cb) { cb(updated); return { catch: function() {} }; }
+      then: function(cb) { cb(null); return { catch: function() {} }; }
     };
   }
 };

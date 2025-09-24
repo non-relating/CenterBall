@@ -1,7 +1,8 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Target, Trophy, Settings, Play } from "lucide-react";
+import { Target, Trophy, Play } from "lucide-react";
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
@@ -124,3 +125,8 @@ export default function Layout({ children, currentPageName }) {
     </div>
   );
 }
+
+Layout.propTypes = {
+  children: PropTypes.node.isRequired,
+  currentPageName: PropTypes.string.isRequired,
+};

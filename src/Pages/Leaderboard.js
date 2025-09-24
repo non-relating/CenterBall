@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { Game } from "@/entities/Game";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Badge } from "@/Components/ui/badge";
 import { Trophy, Crown, Target, TrendingUp } from "lucide-react";
 
@@ -103,6 +104,8 @@ export default function LeaderboardPage() {
       </div>
     );
   }
+  
+  LeaderboardPage.propTypes = {};
 
   return (
     <div className="min-h-screen p-4 md:p-8">
