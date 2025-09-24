@@ -389,5 +389,4 @@ export default function GameTable({ ballPositions, onBallSelect, selectedBall, c
         {renderOverlay()}
       </div>
     );
-  return <div ref={mountRef} className="w-full h-full rounded-lg overflow-hidden" />;
 }
