@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Game } from "@/entities/Game";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
@@ -18,42 +17,44 @@ export default function LeaderboardPage() {
     setIsLoading(true);
     try {
       const allGames = await Game.list("-created_date", 100);
-      const completedGames = allGames.filter(game => game.game_status === "finished");
-      
+      const completedGames = allGames.filter(
+        (game) => game.game_status === "finished",
+      );
+
       // Calculate player stats
       const playerStats = {};
-      
-      completedGames.forEach(game => {
+
+      completedGames.forEach((game) => {
         // Player 1 stats
         if (!playerStats[game.player1_name]) {
-          playerStats[game.player1_name] = { 
-            name: game.player1_name, 
-            wins: 0, 
-            losses: 0, 
-            totalPoints: 0, 
+          playerStats[game.player1_name] = {
+            name: game.player1_name,
+            wins: 0,
+            losses: 0,
+            totalPoints: 0,
             gamesPlayed: 0,
-            averageScore: 0
+            averageScore: 0,
           };
         }
-        
-        // Player 2 stats  
+
+        // Player 2 stats
         if (!playerStats[game.player2_name]) {
-          playerStats[game.player2_name] = { 
-            name: game.player2_name, 
-            wins: 0, 
-            losses: 0, 
-            totalPoints: 0, 
+          playerStats[game.player2_name] = {
+            name: game.player2_name,
+            wins: 0,
+            losses: 0,
+            totalPoints: 0,
             gamesPlayed: 0,
-            averageScore: 0
+            averageScore: 0,
           };
         }
-        
+
         playerStats[game.player1_name].gamesPlayed++;
         playerStats[game.player2_name].gamesPlayed++;
-        
+
         playerStats[game.player1_name].totalPoints += game.player1_score;
         playerStats[game.player2_name].totalPoints += game.player2_score;
-        
+
         if (game.winner === game.player1_name) {
           playerStats[game.player1_name].wins++;
           playerStats[game.player2_name].losses++;
@@ -62,13 +63,15 @@ export default function LeaderboardPage() {
           playerStats[game.player1_name].losses++;
         }
       });
-      
+
       // Calculate averages and win rates
-      Object.values(playerStats).forEach(player => {
-        player.averageScore = player.gamesPlayed > 0 ? player.totalPoints / player.gamesPlayed : 0;
-        player.winRate = player.gamesPlayed > 0 ? (player.wins / player.gamesPlayed) * 100 : 0;
+      Object.values(playerStats).forEach((player) => {
+        player.averageScore =
+          player.gamesPlayed > 0 ? player.totalPoints / player.gamesPlayed : 0;
+        player.winRate =
+          player.gamesPlayed > 0 ? (player.wins / player.gamesPlayed) * 100 : 0;
       });
-      
+
       setGames(completedGames);
       setStats(playerStats);
     } catch (error) {
@@ -79,7 +82,7 @@ export default function LeaderboardPage() {
 
   const getTopPlayers = () => {
     return Object.values(stats)
-      .filter(player => player.gamesPlayed >= 1)
+      .filter((player) => player.gamesPlayed >= 1)
       .sort((a, b) => {
         if (b.wins !== a.wins) return b.wins - a.wins;
         return b.winRate - a.winRate;
@@ -126,39 +129,58 @@ export default function LeaderboardPage() {
               <div className="space-y-4">
                 {getTopPlayers().length > 0 ? (
                   getTopPlayers().map((player, index) => (
-                    <div key={player.name} className="glass-panel rounded-xl p-4 relative overflow-hidden">
+                    <div
+                      key={player.name}
+                      className="glass-panel rounded-xl p-4 relative overflow-hidden"
+                    >
                       {index === 0 && (
                         <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-yellow-400/20 to-orange-500/20 rounded-bl-full"></div>
                       )}
-                      
+
                       <div className="flex items-center justify-between relative z-10">
                         <div className="flex items-center gap-3">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${
-                            index === 0 ? 'bg-gradient-to-r from-yellow-400 to-orange-500 neon-glow' :
-                            index === 1 ? 'bg-gradient-to-r from-gray-300 to-gray-500' :
-                            index === 2 ? 'bg-gradient-to-r from-orange-400 to-yellow-600' :
-                            'bg-gradient-to-r from-purple-400 to-pink-400'
-                          }`}>
-                            {index === 0 ? <Crown className="w-5 h-5" /> : index + 1}
+                          <div
+                            className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${
+                              index === 0
+                                ? "bg-gradient-to-r from-yellow-400 to-orange-500 neon-glow"
+                                : index === 1
+                                  ? "bg-gradient-to-r from-gray-300 to-gray-500"
+                                  : index === 2
+                                    ? "bg-gradient-to-r from-orange-400 to-yellow-600"
+                                    : "bg-gradient-to-r from-purple-400 to-pink-400"
+                            }`}
+                          >
+                            {index === 0 ? (
+                              <Crown className="w-5 h-5" />
+                            ) : (
+                              index + 1
+                            )}
                           </div>
                           <div>
-                            <p className="font-bold text-white">{player.name}</p>
+                            <p className="font-bold text-white">
+                              {player.name}
+                            </p>
                             <p className="text-sm text-gray-300">
-                              {player.gamesPlayed} games • {player.winRate.toFixed(0)}% win rate
+                              {player.gamesPlayed} games •{" "}
+                              {player.winRate.toFixed(0)}% win rate
                             </p>
                           </div>
                         </div>
-                        
+
                         <div className="text-right">
-                          <div className="text-2xl font-bold text-white">{player.wins}</div>
+                          <div className="text-2xl font-bold text-white">
+                            {player.wins}
+                          </div>
                           <div className="text-sm text-gray-400">wins</div>
                         </div>
                       </div>
-                      
+
                       <div className="mt-3 pt-3 border-t border-white/10">
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-300">Avg Score:</span>
-                          <span className="text-cyan-400 font-medium">{player.averageScore.toFixed(1)}</span>
+                          <span className="text-cyan-400 font-medium">
+                            {player.averageScore.toFixed(1)}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -188,32 +210,45 @@ export default function LeaderboardPage() {
                     <div key={game.id} className="glass-panel rounded-xl p-4">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <span className={`text-sm font-medium ${
-                            game.winner === game.player1_name ? 'text-green-400' : 'text-red-400'
-                          }`}>
+                          <span
+                            className={`text-sm font-medium ${
+                              game.winner === game.player1_name
+                                ? "text-green-400"
+                                : "text-red-400"
+                            }`}
+                          >
                             {game.player1_name}
                           </span>
                           <span className="text-gray-400 text-sm">vs</span>
-                          <span className={`text-sm font-medium ${
-                            game.winner === game.player2_name ? 'text-green-400' : 'text-blue-400'
-                          }`}>
+                          <span
+                            className={`text-sm font-medium ${
+                              game.winner === game.player2_name
+                                ? "text-green-400"
+                                : "text-blue-400"
+                            }`}
+                          >
                             {game.player2_name}
                           </span>
                         </div>
-                        
+
                         <div className="text-right">
                           <div className="text-sm font-bold text-white">
                             {game.player1_score} - {game.player2_score}
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Crown className="w-4 h-4 text-yellow-400" />
-                          <span className="text-yellow-400 text-sm font-medium">{game.winner}</span>
+                          <span className="text-yellow-400 text-sm font-medium">
+                            {game.winner}
+                          </span>
                         </div>
-                        <Badge variant="outline" className="border-gray-400/30 text-gray-300 text-xs">
+                        <Badge
+                          variant="outline"
+                          className="border-gray-400/30 text-gray-300 text-xs"
+                        >
                           to {game.target_score}
                         </Badge>
                       </div>

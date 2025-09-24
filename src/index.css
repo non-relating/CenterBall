@@ -11,19 +11,26 @@
   --safe-area-inset-bottom: env(safe-area-inset-bottom);
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   background: #0b1020;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 /* Make main containers mobile friendly */
 .min-h-screen {
-  min-height: calc(100vh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom));
+  min-height: calc(
+    100vh - var(--safe-area-inset-top) - var(--safe-area-inset-bottom)
+  );
 }
 
 /* Touch-friendly buttons and controls */
-button, .button, .glass-panel, .card {
+button,
+.button,
+.glass-panel,
+.card {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -ms-user-select: none;
@@ -37,7 +44,7 @@ button, .button, .glass-panel, .card {
 /* Ensure the Game area fills available width on mobile */
 .game-full-mobile {
   width: 100%;
-  height: calc(100vw * 9/16);
+  height: calc(100vw * 9 / 16);
 }
 
 /* Larger interactive hit areas for mobile */
@@ -55,4 +62,3 @@ svg circle {
 .safe-bottom {
   padding-bottom: calc(12px + var(--safe-area-inset-bottom));
 }
-

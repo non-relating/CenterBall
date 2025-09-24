@@ -4,9 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Slider } from "@/Components/ui/slider";
 import { Move, RotateCw, Target, Zap, RotateCcw } from "lucide-react";
 
-export default function GameControls({ 
-  game, 
-  selectedBall, 
+export default function GameControls({
+  game,
+  selectedBall,
   onAimChange,
   onShoot,
   onCancel,
@@ -46,7 +46,7 @@ export default function GameControls({
   return (
     <div className="space-y-3 h-full text-sm">
       {/* Ball Selection Info */}
-  <div className="glass-panel rounded-2xl p-3 mobile-hit">
+      <div className="glass-panel rounded-2xl p-3 mobile-hit">
         <CardHeader className="p-0 mb-4">
           <CardTitle className="flex items-center gap-2 text-white">
             <Target className="w-5 h-5 text-cyan-400" />
@@ -75,7 +75,9 @@ export default function GameControls({
               </div>
               {!canCurrentPlayerMove() && (
                 <div className="glass-panel bg-red-400/10 border-red-400/30 rounded-lg p-2">
-                  <p className="text-red-400 text-sm text-center">Not your turn!</p>
+                  <p className="text-red-400 text-sm text-center">
+                    Not your turn!
+                  </p>
                 </div>
               )}
             </div>
@@ -136,11 +138,18 @@ export default function GameControls({
             </div>
 
             <div className="flex gap-2">
-              <Button onClick={handleResetAim} variant="outline" className="w-1/2 mobile-hit">
+              <Button
+                onClick={handleResetAim}
+                variant="outline"
+                className="w-1/2 mobile-hit"
+              >
                 <RotateCcw className="w-5 h-5 mr-2" />
                 Cancel
               </Button>
-              <Button onClick={handleShoot} className="w-1/2 mobile-hit bg-green-500 hover:bg-green-600">
+              <Button
+                onClick={handleShoot}
+                className="w-1/2 mobile-hit bg-green-500 hover:bg-green-600"
+              >
                 <Zap className="w-5 h-5 mr-2" />
                 Shoot
               </Button>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Game } from "@/entities";
 import { Button } from "@/Components/ui/button";
@@ -8,7 +7,13 @@ import { Badge } from "@/Components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Play, Users, Trophy, Target, Zap, Crown } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/Components/ui/select";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -30,7 +35,7 @@ export default function HomePage() {
 
   const createNewGame = async () => {
     if (!player1Name.trim() || !player2Name.trim()) return;
-    
+
     setIsLoading(true);
     try {
       const newGame = await Game.create({
@@ -41,11 +46,21 @@ export default function HomePage() {
         game_status: "setup",
         ball_positions: {
           center_ball: { x: 0, y: 0, active: true },
-          player1_balls: Array.from({length: 5}, (_, i) => ({ x: 0, y: 150 + i * 30, active: true, id: i + 1 })),
-          player2_balls: Array.from({length: 5}, (_, i) => ({ x: 0, y: -150 - i * 30, active: true, id: i + 1 }))
-        }
+          player1_balls: Array.from({ length: 5 }, (_, i) => ({
+            x: 0,
+            y: 150 + i * 30,
+            active: true,
+            id: i + 1,
+          })),
+          player2_balls: Array.from({ length: 5 }, (_, i) => ({
+            x: 0,
+            y: -150 - i * 30,
+            active: true,
+            id: i + 1,
+          })),
+        },
       });
-      
+
       navigate(createPageUrl("Game") + `?id=${newGame.id}`);
     } catch (error) {
       console.error("Error creating game:", error);
@@ -72,9 +87,10 @@ export default function HomePage() {
                 CenterBall
               </h1>
               <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-                A futuristic precision ball game where strategy meets skill. Get your ball closest to the center while controlling the arena.
+                A futuristic precision ball game where strategy meets skill. Get
+                your ball closest to the center while controlling the arena.
               </p>
-              
+
               <div className="flex flex-wrap justify-center gap-6 text-sm">
                 <div className="flex items-center gap-2 text-cyan-400">
                   <Zap className="w-5 h-5 neon-glow" />
@@ -105,7 +121,9 @@ export default function HomePage() {
             <CardContent className="p-0 space-y-6">
               <div className="grid gap-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-300 mb-2 block">Red Player</label>
+                  <label className="text-sm font-medium text-gray-300 mb-2 block">
+                    Red Player
+                  </label>
                   <Input
                     placeholder="Enter red player name"
                     value={player1Name}
@@ -114,7 +132,9 @@ export default function HomePage() {
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-300 mb-2 block">Blue Player</label>
+                  <label className="text-sm font-medium text-gray-300 mb-2 block">
+                    Blue Player
+                  </label>
                   <Input
                     placeholder="Enter blue player name"
                     value={player2Name}
@@ -123,7 +143,9 @@ export default function HomePage() {
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-300 mb-2 block">Game Mode</label>
+                  <label className="text-sm font-medium text-gray-300 mb-2 block">
+                    Game Mode
+                  </label>
                   <Select value={targetScore} onValueChange={setTargetScore}>
                     <SelectTrigger className="glass-panel border-gray-400/30 text-white">
                       <SelectValue />
@@ -131,7 +153,10 @@ export default function HomePage() {
                     <SelectContent className="glass-panel border-gray-400/30">
                       <SelectItem value="21" className="text-white">
                         <div className="flex items-center gap-2">
-                          <Badge variant="secondary" className="bg-green-400/20 text-green-400 border-green-400/30">
+                          <Badge
+                            variant="secondary"
+                            className="bg-green-400/20 text-green-400 border-green-400/30"
+                          >
                             Beginner
                           </Badge>
                           <span>First to 21 points</span>
@@ -139,7 +164,10 @@ export default function HomePage() {
                       </SelectItem>
                       <SelectItem value="11" className="text-white">
                         <div className="flex items-center gap-2">
-                          <Badge variant="secondary" className="bg-red-400/20 text-red-400 border-red-400/30">
+                          <Badge
+                            variant="secondary"
+                            className="bg-red-400/20 text-red-400 border-red-400/30"
+                          >
                             Veteran
                           </Badge>
                           <span>First to 11 points</span>
@@ -149,10 +177,12 @@ export default function HomePage() {
                   </Select>
                 </div>
               </div>
-              
+
               <Button
                 onClick={createNewGame}
-                disabled={!player1Name.trim() || !player2Name.trim() || isLoading}
+                disabled={
+                  !player1Name.trim() || !player2Name.trim() || isLoading
+                }
                 className="w-full bg-gradient-to-r from-cyan-500 to-magenta-500 hover:from-cyan-600 hover:to-magenta-600 text-white font-bold py-3 rounded-xl neon-glow transition-all duration-300"
               >
                 {isLoading ? (
@@ -182,32 +212,44 @@ export default function HomePage() {
               <div className="space-y-3 max-h-96 overflow-y-auto">
                 {games.length > 0 ? (
                   games.map((game) => (
-                    <div key={game.id} className="glass-panel rounded-xl p-4 hover:bg-white/20 transition-all duration-300 group">
+                    <div
+                      key={game.id}
+                      className="glass-panel rounded-xl p-4 hover:bg-white/20 transition-all duration-300 group"
+                    >
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
                           <Users className="w-5 h-5 text-purple-400" />
                           <div>
                             <div className="flex items-center gap-2 text-sm">
-                              <span className="text-red-400 font-medium">{game.player1_name}</span>
+                              <span className="text-red-400 font-medium">
+                                {game.player1_name}
+                              </span>
                               <span className="text-gray-400">vs</span>
-                              <span className="text-blue-400 font-medium">{game.player2_name}</span>
+                              <span className="text-blue-400 font-medium">
+                                {game.player2_name}
+                              </span>
                             </div>
                             <div className="text-xs text-gray-400">
-                              {game.game_status === "finished" ? "Completed" : "In Progress"}
+                              {game.game_status === "finished"
+                                ? "Completed"
+                                : "In Progress"}
                             </div>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center gap-3">
                           <div className="text-right">
                             <div className="text-sm font-bold text-white">
                               {game.player1_score} - {game.player2_score}
                             </div>
-                            <Badge variant="outline" className="border-gray-400/30 text-gray-300">
+                            <Badge
+                              variant="outline"
+                              className="border-gray-400/30 text-gray-300"
+                            >
                               to {game.target_score}
                             </Badge>
                           </div>
-                          
+
                           {game.game_status !== "finished" && (
                             <Button
                               onClick={() => continueGame(game.id)}
@@ -219,11 +261,13 @@ export default function HomePage() {
                           )}
                         </div>
                       </div>
-                      
+
                       {game.winner && (
                         <div className="flex items-center gap-2 text-sm">
                           <Crown className="w-4 h-4 text-yellow-400 neon-glow" />
-                          <span className="text-yellow-400 font-medium">Winner: {game.winner}</span>
+                          <span className="text-yellow-400 font-medium">
+                            Winner: {game.winner}
+                          </span>
                         </div>
                       )}
                     </div>

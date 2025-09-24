@@ -1,34 +1,47 @@
 {
   "env": {
     "browser": true,
-    "es2020": true
+    "es2021": true
   },
   "extends": [
     "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:react/jsx-runtime",
-    "plugin:react-hooks/recommended"
+    "plugin:react/recommended"
   ],
-  "overrides": [],
   "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
   "plugins": [
-    "react",
-    "react-hooks",
-    "react-refresh"
+    "react"
   ],
   "rules": {
-    "react/prop-types": "off",
-    "react-refresh/only-export-components": [
-      "warn",
-      { "allowConstantExport": true }
-    ]
+    "es-x/no-modules": "off",
+    "es-x/no-destructuring": "off",
+    "es-x/no-block-scoped-variables": "off",
+    "es-x/no-arrow-functions": "off",
+    "fp/no-nil": "off",
+    "unicorn/no-array-for-each": "off",
+    "no-unused-vars": "warn"
   },
   "settings": {
     "react": {
       "version": "detect"
+    },
+    "import/resolver": {
+      "node": {
+        "paths": [
+          "src"
+        ],
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
+      }
     }
   },
   "ignorePatterns": [

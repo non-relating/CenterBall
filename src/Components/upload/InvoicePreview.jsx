@@ -1,9 +1,21 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/Components/ui/card";
+import React, { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/Components/ui/card";
 import { Input } from "@/Components/ui/input";
 import { Button } from "@/Components/ui/button";
 import { Label } from "@/Components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/Components/ui/select";
 import {
   Table,
   TableBody,
@@ -30,21 +42,21 @@ const CATEGORIES = [
   "training",
   "shipping",
   "meals_entertainment",
-  "other"
+  "other",
 ];
 
-export default function InvoicePreview({ 
-  extractedData, 
+export default function InvoicePreview({
+  extractedData,
   onSave,
   onCancel,
-  isProcessing 
+  isProcessing,
 }) {
   const [editedData, setEditedData] = useState(extractedData);
 
   const handleInputChange = (field, value) => {
-    setEditedData(prev => ({
+    setEditedData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
@@ -56,37 +68,43 @@ export default function InvoicePreview({
     };
 
     // Update total if quantity or unit_price changes
-    if (field === 'quantity' || field === 'unit_price') {
-      newItems[index].total = (newItems[index].quantity || 0) * (newItems[index].unit_price || 0);
+    if (field === "quantity" || field === "unit_price") {
+      newItems[index].total =
+        (newItems[index].quantity || 0) * (newItems[index].unit_price || 0);
     }
 
-    setEditedData(prev => ({
+    setEditedData((prev) => ({
       ...prev,
-      items: newItems
+      items: newItems,
     }));
   };
 
   const addNewItem = () => {
-    setEditedData(prev => ({
+    setEditedData((prev) => ({
       ...prev,
-      items: [...(prev.items || []), {
-        description: '',
-        quantity: 1,
-        unit_price: 0,
-        total: 0
-      }]
+      items: [
+        ...(prev.items || []),
+        {
+          description: "",
+          quantity: 1,
+          unit_price: 0,
+          total: 0,
+        },
+      ],
     }));
   };
 
   const removeItem = (index) => {
-    setEditedData(prev => ({
+    setEditedData((prev) => ({
       ...prev,
-      items: prev.items.filter((_, i) => i !== index)
+      items: prev.items.filter((_, i) => i !== index),
     }));
   };
 
   const calculateTotal = () => {
-    return editedData.items?.reduce((sum, item) => sum + (item.total || 0), 0) || 0;
+    return (
+      editedData.items?.reduce((sum, item) => sum + (item.total || 0), 0) || 0
+    );
   };
 
   return (
@@ -106,8 +124,8 @@ export default function InvoicePreview({
             <Label htmlFor="vendor">Vendor</Label>
             <Input
               id="vendor"
-              value={editedData.vendor || ''}
-              onChange={(e) => handleInputChange('vendor', e.target.value)}
+              value={editedData.vendor || ""}
+              onChange={(e) => handleInputChange("vendor", e.target.value)}
               placeholder="Vendor name"
             />
           </div>
@@ -115,8 +133,10 @@ export default function InvoicePreview({
             <Label htmlFor="invoice_number">Invoice Number</Label>
             <Input
               id="invoice_number"
-              value={editedData.invoice_number || ''}
-              onChange={(e) => handleInputChange('invoice_number', e.target.value)}
+              value={editedData.invoice_number || ""}
+              onChange={(e) =>
+                handleInputChange("invoice_number", e.target.value)
+              }
               placeholder="Invoice #"
             />
           </div>
@@ -125,15 +145,15 @@ export default function InvoicePreview({
             <Input
               id="date"
               type="date"
-              value={editedData.date || ''}
-              onChange={(e) => handleInputChange('date', e.target.value)}
+              value={editedData.date || ""}
+              onChange={(e) => handleInputChange("date", e.target.value)}
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
             <Select
-              value={editedData.category || ''}
-              onValueChange={(value) => handleInputChange('category', value)}
+              value={editedData.category || ""}
+              onValueChange={(value) => handleInputChange("category", value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select category" />
@@ -141,7 +161,9 @@ export default function InvoicePreview({
               <SelectContent>
                 {CATEGORIES.map((category) => (
                   <SelectItem key={category} value={category}>
-                    {category.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    {category
+                      .replace(/_/g, " ")
+                      .replace(/\b\w/g, (l) => l.toUpperCase())}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -162,7 +184,7 @@ export default function InvoicePreview({
               <Plus className="w-4 h-4" /> Add Item
             </Button>
           </div>
-          
+
           <div className="rounded-md border">
             <Table>
               <TableHeader>
@@ -179,8 +201,10 @@ export default function InvoicePreview({
                   <TableRow key={index}>
                     <TableCell>
                       <Input
-                        value={item.description || ''}
-                        onChange={(e) => handleItemChange(index, 'description', e.target.value)}
+                        value={item.description || ""}
+                        onChange={(e) =>
+                          handleItemChange(index, "description", e.target.value)
+                        }
                         placeholder="Item description"
                       />
                     </TableCell>
@@ -188,8 +212,14 @@ export default function InvoicePreview({
                       <Input
                         type="number"
                         min="0"
-                        value={item.quantity || ''}
-                        onChange={(e) => handleItemChange(index, 'quantity', parseFloat(e.target.value))}
+                        value={item.quantity || ""}
+                        onChange={(e) =>
+                          handleItemChange(
+                            index,
+                            "quantity",
+                            parseFloat(e.target.value),
+                          )
+                        }
                         className="w-20"
                       />
                     </TableCell>
@@ -198,8 +228,14 @@ export default function InvoicePreview({
                         type="number"
                         min="0"
                         step="0.01"
-                        value={item.unit_price || ''}
-                        onChange={(e) => handleItemChange(index, 'unit_price', parseFloat(e.target.value))}
+                        value={item.unit_price || ""}
+                        onChange={(e) =>
+                          handleItemChange(
+                            index,
+                            "unit_price",
+                            parseFloat(e.target.value),
+                          )
+                        }
                         className="w-24"
                       />
                     </TableCell>
@@ -221,7 +257,10 @@ export default function InvoicePreview({
                 ))}
                 {(!editedData.items || editedData.items.length === 0) && (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center text-gray-500 py-4">
+                    <TableCell
+                      colSpan={5}
+                      className="text-center text-gray-500 py-4"
+                    >
                       No items added. Click "Add Item" to start.
                     </TableCell>
                   </TableRow>
@@ -247,7 +286,9 @@ export default function InvoicePreview({
           <XCircle className="w-4 h-4" /> Cancel
         </Button>
         <Button
-          onClick={() => onSave({ ...editedData, total_amount: calculateTotal() })}
+          onClick={() =>
+            onSave({ ...editedData, total_amount: calculateTotal() })
+          }
           disabled={isProcessing}
           className="bg-green-600 hover:bg-green-700 flex items-center gap-2"
         >

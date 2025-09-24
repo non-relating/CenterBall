@@ -51,12 +51,18 @@ export default function Layout({ children, currentPageName }) {
           50% { opacity: 0.7; }
         }
       `}</style>
-      
+
       {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-20 w-32 h-32 rounded-full bg-cyan-400/20 blur-3xl pulse-glow"></div>
-        <div className="absolute bottom-20 right-20 w-40 h-40 rounded-full bg-magenta-400/20 blur-3xl pulse-glow" style={{animationDelay: '1s'}}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 rounded-full bg-yellow-400/10 blur-3xl pulse-glow" style={{animationDelay: '2s'}}></div>
+        <div
+          className="absolute bottom-20 right-20 w-40 h-40 rounded-full bg-magenta-400/20 blur-3xl pulse-glow"
+          style={{ animationDelay: "1s" }}
+        ></div>
+        <div
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 rounded-full bg-yellow-400/10 blur-3xl pulse-glow"
+          style={{ animationDelay: "2s" }}
+        ></div>
       </div>
 
       {/* Navigation */}
@@ -73,15 +79,19 @@ export default function Layout({ children, currentPageName }) {
                     <h1 className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-magenta-500 bg-clip-text text-transparent">
                       CenterBall
                     </h1>
-                    <p className="text-xs text-gray-300">Futuristic Precision Game</p>
+                    <p className="text-xs text-gray-300">
+                      Futuristic Precision Game
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="flex gap-2">
                   <Link
                     to={createPageUrl("Home")}
                     className={`glass-panel px-4 py-2 rounded-xl transition-all duration-300 flex items-center gap-2 hover:bg-white/20 ${
-                      location.pathname === createPageUrl("Home") ? 'bg-white/20 border-cyan-400' : ''
+                      location.pathname === createPageUrl("Home")
+                        ? "bg-white/20 border-cyan-400"
+                        : ""
                     }`}
                   >
                     <Play className="w-4 h-4 text-cyan-400" />
@@ -90,11 +100,15 @@ export default function Layout({ children, currentPageName }) {
                   <Link
                     to={createPageUrl("Leaderboard")}
                     className={`glass-panel px-4 py-2 rounded-xl transition-all duration-300 flex items-center gap-2 hover:bg-white/20 ${
-                      location.pathname === createPageUrl("Leaderboard") ? 'bg-white/20 border-magenta-400' : ''
+                      location.pathname === createPageUrl("Leaderboard")
+                        ? "bg-white/20 border-magenta-400"
+                        : ""
                     }`}
                   >
                     <Trophy className="w-4 h-4 text-magenta-400" />
-                    <span className="text-white text-sm font-medium">Scores</span>
+                    <span className="text-white text-sm font-medium">
+                      Scores
+                    </span>
                   </Link>
                 </div>
               </div>
