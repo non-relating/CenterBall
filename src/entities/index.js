@@ -39,12 +39,13 @@ function generateId() {
 // Helper function to generate player balls
 function generatePlayerBalls(player) {
   const arr = [];
-  const yOffset = player === 1 ? 150 : -150;
-  const yIncrement = player === 1 ? 30 : -30;
+  const zOffset = player === 1 ? 150 : -150;
+  const zIncrement = player === 1 ? 30 : -30;
   for (let i = 0; i < 5; i++) {
     arr.push({
       x: 0,
-      y: yOffset + i * yIncrement,
+      y: 0.4,
+      z: zOffset + i * zIncrement,
       active: true,
       id: i + 1
     });

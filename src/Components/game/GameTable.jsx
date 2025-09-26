@@ -43,7 +43,7 @@ export default function GameTable({
     centerBall.position.set(
       ballPositions.center_ball.x,
       ballPositions.center_ball.y,
-      8,
+      ballPositions.center_ball.z,
     );
     centerBall.castShadow = true;
     centerBall.receiveShadow = true;
@@ -66,7 +66,7 @@ export default function GameTable({
     ballPositions.player1_balls.forEach((ball) => {
       if (ball.active) {
         const ballMesh = new THREE.Mesh(ballGeometry, player1Material);
-        ballMesh.position.set(ball.x, ball.y, 8);
+        ballMesh.position.set(ball.x, ball.y, ball.z);
         ballMesh.castShadow = true;
         ballMesh.receiveShadow = true;
         ballMesh.userData = { id: ball.id, type: "player1", isPlayer1: true };
@@ -90,7 +90,7 @@ export default function GameTable({
     ballPositions.player2_balls.forEach((ball) => {
       if (ball.active) {
         const ballMesh = new THREE.Mesh(ballGeometry, player2Material);
-        ballMesh.position.set(ball.x, ball.y, 8);
+        ballMesh.position.set(ball.x, ball.y, ball.z);
         ballMesh.castShadow = true;
         ballMesh.receiveShadow = true;
         ballMesh.userData = { id: ball.id, type: "player2", isPlayer1: false };
@@ -123,11 +123,11 @@ export default function GameTable({
       if (!isCurrentPlayerBall) return false;
 
       // Check if ball is still in start zone
-      const ballY = ball.position.y;
+      const ballZ = ball.position.z;
       if (currentPlayer === 1) {
-        return ballY >= 200; // Player 1 start zone barrier
+        return ballZ >= 200; // Player 1 start zone barrier
       } else {
-        return ballY <= -200; // Player 2 start zone barrier
+        return ballZ <= -200; // Player 2 start zone barrier
       }
     },
     [currentTurn],
@@ -361,7 +361,7 @@ export default function GameTable({
         mountElement.removeChild(renderer.domElement);
       }
     };
-  }, [ballPositions, createBalls, currentTurn, onBallSelect]);
+  }, [createBalls, currentTurn, onBallSelect]);
 
   useEffect(() => {
     // Update ball positions when ballPositions prop changes
@@ -381,7 +381,7 @@ export default function GameTable({
         }
 
         if (ballData) {
-          ballMesh.position.set(ballData.x, ballData.y, 8);
+          ballMesh.position.set(ballData.x, ballData.y, ballData.z);
           ballMesh.visible = ballData.active;
         }
       });
@@ -425,7 +425,7 @@ export default function GameTable({
           {center && (
             <circle
               cx={center.x}
-              cy={center.y}
+              cy={center.z}
               r="8"
               fill="#ffffff"
               stroke="#ddd"
@@ -440,7 +440,7 @@ export default function GameTable({
             <g key={`p1-${b.id}`}>
               <circle
                 cx={b.x}
-                cy={b.y}
+                cy={b.z}
                 r="8"
                 fill="#ff3333"
                 pointerEvents="auto"
@@ -454,7 +454,7 @@ export default function GameTable({
             <g key={`p2-${b.id}`}>
               <circle
                 cx={b.x}
-                cy={b.y}
+                cy={b.z}
                 r="8"
                 fill="#3333ff"
                 pointerEvents="auto"

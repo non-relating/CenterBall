@@ -45,16 +45,18 @@ export default function HomePage() {
         current_turn: 1,
         game_status: "setup",
         ball_positions: {
-          center_ball: { x: 0, y: 0, active: true },
+          center_ball: { x: 0, y: 0.4, z: 0 },
           player1_balls: Array.from({ length: 5 }, (_, i) => ({
             x: 0,
-            y: 150 + i * 30,
+            y: 0.4,
+            z: 150 + i * 30,
             active: true,
             id: i + 1,
           })),
           player2_balls: Array.from({ length: 5 }, (_, i) => ({
             x: 0,
-            y: -150 - i * 30,
+            y: 0.4,
+            z: -150 - i * 30,
             active: true,
             id: i + 1,
           })),
